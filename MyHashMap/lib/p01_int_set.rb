@@ -42,19 +42,26 @@ class IntSet
   end
 
   def insert(num)
+    @store[num % num_buckets] << num
+    return true
   end
 
   def remove(num)
+    bucket = @store[num % num_buckets]
+    num_i = bucket.index(num)
+    bucket.delete_at(num_i)
   end
 
   def include?(num)
+    @store[num % num_buckets].include?(num)
   end
 
   private
 
-  def [](num)
-    # optional but useful; return the bucket corresponding to `num`
-  end
+  # def [](num)
+  #   i = num % num_buckets
+  #   @store[i]
+  # end
 
   def num_buckets
     @store.length
