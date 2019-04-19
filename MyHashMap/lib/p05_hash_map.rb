@@ -73,12 +73,23 @@ class HashMap
   end
 
   def resize!
+    hash = {}
     
+    @store.each do |bucket|
+      bucket.each do |node|
+        hash[node.key] = node.val
+        self.delete(node.key) 
+      end
+    end
+
+    num_buckets.times { @store << LinkedList.new }
+
+    hash.each { |key, val| self.set(key, val) }
   end
 
   def bucket(key)
-    hashed = key.hash
-    @store[hashed % num_buckets]
+    # hashed = key.hash
+    # @store[hashed % num_buckets]
     # optional but useful; return the bucket corresponding to `key`
   end
 end
