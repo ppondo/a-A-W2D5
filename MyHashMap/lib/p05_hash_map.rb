@@ -18,12 +18,12 @@ class HashMap
     resize! if count == num_buckets
     hashed = key.hash
 
-    unless include?(key)
+    if include?(key)
+      @store[hashed % num_buckets].update(key,val)
+    else
       @store[hashed % num_buckets].append(key,val) 
       @count += 1
       return true
-    else
-      @store[hashed % num_buckets].update(key,val)
     end
   end
 
@@ -42,7 +42,7 @@ class HashMap
     list = @store[hashed % num_buckets]
 
     list.remove(key)
-    count -= 1
+    @count -= 1
   end
 
   def each
@@ -56,12 +56,12 @@ class HashMap
   end
 
   # uncomment when you have Enumerable included
-  # def to_s
-  #   pairs = inject([]) do |strs, (k, v)|
-  #     strs << "#{k.to_s} => #{v.to_s}"
-  #   end
-  #   "{\n" + pairs.join(",\n") + "\n}"
-  # end
+  def to_s
+    pairs = inject([]) do |strs, (k, v)|
+      strs << "#{k.to_s} => #{v.to_s}"
+    end
+    "{\n" + pairs.join(",\n") + "\n}"
+  end
 
   alias_method :[], :get
   alias_method :[]=, :set
@@ -73,6 +73,7 @@ class HashMap
   end
 
   def resize!
+    
   end
 
   def bucket(key)
