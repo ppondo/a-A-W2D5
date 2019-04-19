@@ -14,6 +14,7 @@ class Node
   end
 
   def remove
+    self.prev.next = self.next
     # optional but useful, connects previous link to next link
     # and removes self from list.
   end
@@ -43,32 +44,50 @@ class LinkedList
   end
 
   def empty?
-    if @head.next != @tail
-      return false 
-    else
+    if first == @tail && last == @head
       return true
+    else
+      return false
     end
   end
 
   def get(key)
+
   end
 
   def include?(key)
   end
 
   def append(key, val)
+    new_node = Node.new(key,val)
+    if self.empty?
+      new_node.prev = @head
+      @head.next = new_node
+      new_node.next = @tail
+      @tail.prev = new_node
+    else
+      new_node.prev = self.last
+      self.last.next = new_node
+      new_node.next = @tail
+      @tail.prev = new_node
+    end
   end
 
   def update(key, val)
-    
+
   end
 
   def remove(key)
+    self.each do |node|
+      if node.key == key
+        node.remove
+      end
+    end
   end
 
   def each(&prc)
-    current = self.first
-    until current = self.last
+    current = first
+    until current = last
       prc.call(current)
       current = current.next
     end
