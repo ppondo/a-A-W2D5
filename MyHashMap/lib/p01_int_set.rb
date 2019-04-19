@@ -1,3 +1,4 @@
+require 'byebug'
 class MaxIntSet
   attr_reader :max, :store
   def initialize(max)
@@ -69,7 +70,7 @@ class IntSet
 end
 
 class ResizingIntSet
-  attr_reader :count
+  attr_accessor :count
 
   def initialize(num_buckets = 20)
     @store = Array.new(num_buckets) { Array.new }
@@ -77,12 +78,25 @@ class ResizingIntSet
   end
 
   def insert(num)
+    resize! if count == num_buckets
+    unless include?(num)
+      @store[num % num_buckets] << num 
+      @count += 1
+      return true
+    end
   end
 
   def remove(num)
+    if include?(num)
+      bucket = @store[num % num_buckets]
+      num_i = bucket.index(num)
+      bucket.delete_at(num_i)
+      @count -= 1
+    end
   end
 
   def include?(num)
+    @store[num % num_buckets].include?(num)
   end
 
   private
@@ -96,5 +110,17 @@ class ResizingIntSet
   end
 
   def resize!
+    nums = []
+    
+    @store.each do |bucket|
+      bucket.each do |num|
+        nums << num
+        self.remove(num) 
+      end
+    end
+
+    num_buckets.times { @store << [] }
+
+    nums.each { |num| self.insert(num) }
   end
 end
